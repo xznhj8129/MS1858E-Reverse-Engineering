@@ -1,5 +1,8 @@
 # MS1858E reverse engineering
 
+![Snow](hardware/photos/snow.jpg)
+
+
 CVBS/S-Video → HDMI converter IC (MacroSilicon MS1858E, QFN-48) with an on-die 8051, mask ROM, and a 2 KB I²C EEPROM (`24C16`) for customization.
 
 This repo documents the EEPROM overlay, XDATA registers inferred from the 8051 code, working firmware patches, and MicroPython tools to dump/flash the EEPROM in-circuit.
@@ -36,11 +39,9 @@ You do **not** talk to the MS1858E itself for these tools. You bit-bang the EEPR
 3. If the MS1858E holds the bus after boot, **hold the converter in reset** (or power the board so the MCU is not mastering I²C) while the Pico dumps/flashes. Easiest reliable method: power the module, then **short/hold RST** on the MS1858E so only the EEPROM is on the bus — or dump with the converter unpowered and the Pico feeding 3.3 V + GND to the EEPROM only (watch for back-power through protection diodes).
 4. 24C16 WP pin: tie to GND if writes fail.
 
-Drop a photo of your wiring here:
 
 ![EEPROM wiring](hardware/photos/wiring.jpg)
 
-If the image is missing, add `hardware/photos/wiring.jpg` (see [`hardware/README.md`](hardware/README.md)).
 
 ### EEPROM map (I²C)
 
