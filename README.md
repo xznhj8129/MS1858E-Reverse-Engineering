@@ -7,13 +7,17 @@ CVBS/S-Video → HDMI converter IC (MacroSilicon MS1858E, QFN-48) with an on-die
 
 This repo documents the EEPROM overlay, XDATA registers inferred from the 8051 code, working firmware patches, and MicroPython tools to dump/flash the EEPROM in-circuit.
 
-**Working patches (tested on a live FPV CVBS→HDMI board):**
+**Patches and test status (live FPV CVBS→HDMI board, 2026-11-08):**
 
 | Image | What it does |
 |-------|----------------|
 | [`firmware/stock.bin`](firmware/stock.bin) | Original dump |
 | [`firmware/noblue.bin`](firmware/noblue.bin) | No blue-screen fill on loss of lock; analog **snow** from the ADC; fast lock recovery |
-| [`firmware/noblue_skipe67a.bin`](firmware/noblue_skipe67a.bin) | `noblue` plus skip scaler reinit (`E67A(0x11)`) while unlocked — holds sync better on weak FPV, snow still works |
+| [`firmware/noblue_skipe67a.bin`](firmware/noblue_skipe67a.bin) | Original skip attempt. **Did not reproduce on this board** (~1 s snow, then blue + "NO SIGNAL"); use the fixed image below |
+| [`firmware/bootfix_skipe67a_fixed.bin`](firmware/bootfix_skipe67a_fixed.bin) | **Recommended:** `noblue` + boot-with-signal unblank/blue-clear + corrected skip of `E67A(0x11)` on unlock. Snow on loss, no blue on drop, one brief blue frame on reacquisition; ROM OSD text remains |
+
+See [`docs/FINDINGS.md`](docs/FINDINGS.md) for what worked, what failed, and
+the remaining limitations.
 
 ---
 
@@ -84,6 +88,7 @@ After flashing, **power-cycle** the converter so the MS1858E reloads the EEPROM.
 | [`docs/REGISTERS.md`](docs/REGISTERS.md) | XDATA / ROM entry points — **confirmed vs likely vs guess** |
 | [`docs/OVERLAY.md`](docs/OVERLAY.md) | 8051 overlay hooks and control flow |
 | [`docs/PATCHES.md`](docs/PATCHES.md) | Byte-level patches and live test results |
+| [`docs/FINDINGS.md`](docs/FINDINGS.md) | 2026-11-08 test log: boot fix, blue-frame cause, OSD limits, failed experiments |
 | [`docs/overlay_disasm.asm`](docs/overlay_disasm.asm) | Full stock disassembly (`PC = EEPROM offset`) |
 | [`docs/i2c_boot_capture.txt`](docs/i2c_boot_capture.txt) | Logic-analyzer I²C read log (8-bit address, no bank) |
 
@@ -110,6 +115,8 @@ code   = sum(eeprom[0x40 .. 0x40+length]) & 0xFFFF
 ```
 
 Stock: length `0x0310`, header `0x0B9A`, code `0xA34C` stored at `0x350`.
+`bootfix_skipe67a_fixed`: length `0x0370`, header `0x0BFA`, code `0xE5A3`
+stored at `0x3B0`.
 
 ---
 

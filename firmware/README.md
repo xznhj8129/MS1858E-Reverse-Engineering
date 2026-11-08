@@ -3,8 +3,9 @@
 | File | Status | Notes |
 |------|--------|--------|
 | `stock.bin` | original dump | checksums `0x0B9A` / `0xA34C` |
-| `noblue.bin` | **tested** | no blue fill → ADC snow; fast FPV recover |
-| `noblue_skipe67a.bin` | **tested** | noblue + skip `E67A(0x11)` on unlock only |
+| `noblue.bin` | **tested** | no blue fill → ADC snow; fast FPV recover; ROM OSD text remains |
+| `noblue_skipe67a.bin` | **did not reproduce** | original skip attempt; on the 2026-11-08 board: ~1 s snow, then blue + OSD |
+| `bootfix_skipe67a_fixed.bin` | **tested, recommended** | noblue + boot-with-signal fix + corrected skip on unlock; checksums `0x0BFA` / `0xE5A3` |
 
 Rebuild from stock:
 

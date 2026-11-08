@@ -23,7 +23,8 @@ After a successful verify, **power-cycle** the converter.
 python3 tools/build_patches.py firmware/stock.bin
 ```
 
-Rebuilds `noblue.bin` and `noblue_skipe67a.bin` and prints checksums.
+Rebuilds `noblue.bin`, `noblue_skipe67a.bin` and
+`bootfix_skipe67a_fixed.bin` and prints checksums.
 
 Expected:
 
@@ -32,3 +33,4 @@ Expected:
 | stock | `0x0310` | `0x0B9A` | `0xA34C` |
 | noblue | `0x0310` | `0x0B9A` | `0x9FA0` |
 | noblue_skipe67a | `0x0327` | `0x0BB1` | `0xA8D4` |
+| bootfix_skipe67a_fixed | `0x0370` | `0x0BFA` | `0xE5A3` |
