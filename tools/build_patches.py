@@ -40,12 +40,15 @@ CAVE = bytes(
 )
 
 
-# bootfix_skipe67a_fixed:
+# bootfix_skipe67a_fixed (experimental):
 # - one-time F8B9=0 / E2EA=1 on the first valid-video frame (EC07 flag),
 #   routed from the video commit at 0x00A4.
 # - E67A(0x11) skipped only while unlocked; the stock 0x0075 path still updates
 #   EC01=0 and EC00=E1F4, so relock reinitializes normally.
 # - 0294 disabled: no E67A(0xCC) blue flash on quality drop.
+# - WARNING: v1 blue-screens when booting with the VTX off (the first
+#   E67A(0x11) is skipped). noblue.bin is the recommended image; see
+#   docs/FINDINGS.md.
 BOOT_CAVE = bytes(
     [
         0x90, 0xEC, 0x07,  # MOV DPTR,#EC07

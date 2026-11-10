@@ -12,9 +12,9 @@ This repo documents the EEPROM overlay, XDATA registers inferred from the 8051 c
 | Image | What it does |
 |-------|----------------|
 | [`firmware/stock.bin`](firmware/stock.bin) | Original dump |
-| [`firmware/noblue.bin`](firmware/noblue.bin) | No blue-screen fill on loss of lock; analog **snow** from the ADC; fast lock recovery |
-| [`firmware/noblue_skipe67a.bin`](firmware/noblue_skipe67a.bin) | Original skip attempt. **Did not reproduce on this board** (~1 s snow, then blue + "NO SIGNAL"); use the fixed image below |
-| [`firmware/bootfix_skipe67a_fixed.bin`](firmware/bootfix_skipe67a_fixed.bin) | **Recommended:** `noblue` + boot-with-signal unblank/blue-clear + corrected skip of `E67A(0x11)` on unlock. Snow on loss, no blue on drop, one brief blue frame on reacquisition; ROM OSD text remains |
+| [`firmware/noblue.bin`](firmware/noblue.bin) | **Recommended for this setup:** no blue-screen fill on loss of lock; analog **snow** from the ADC; works when booting with the VTX off; no blue on drop or re-lock; ROM OSD text remains |
+| [`firmware/noblue_skipe67a.bin`](firmware/noblue_skipe67a.bin) | Original skip attempt. **Did not reproduce on this board** (~1 s snow, then blue + "NO SIGNAL") |
+| [`firmware/bootfix_skipe67a_fixed.bin`](firmware/bootfix_skipe67a_fixed.bin) | **Experimental:** boot-with-VTX-on handling. This build blue-screens when booting with the VTX off; a later v2 fixed that but still adds one blue frame on re-lock. Not recommended for VTX-off boot |
 
 See [`docs/FINDINGS.md`](docs/FINDINGS.md) for what worked, what failed, and
 the remaining limitations.

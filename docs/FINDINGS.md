@@ -6,38 +6,37 @@ The MS1858E reset pin is not accessible on this board.
 
 ## Recommended image
 
-`firmware/bootfix_skipe67a_fixed.bin`
+`firmware/noblue.bin` — the working image for this setup.
 
-| Property | Value |
-|---|---|
-| length | `0x0370` |
-| header checksum | `0x0BFA` |
-| code checksum | `0xE5A3` |
-| checksums at | `0x3B0` |
+- Boot with VTX off: snow.
+- Signal loss: snow; no persistent blue; no blue on drop or re-lock.
+- Boot with VTX on: not tested / no boot-state handling.
+- "NO SIGNAL" text remains over the snow (mask ROM).
 
-Built from `stock.bin` by `tools/build_patches.py`.
+## Experimental bootfix images
 
-Observed behaviour:
+`bootfix_skipe67a_fixed.bin` (v1):
 
-- Power-up with the VTX already on: picture comes up directly.
-- Live signal: normal.
-- Signal loss: snow; no persistent blue screen; no blue on the drop.
-- Reacquisition: one brief blue frame (the mandatory scaler reinit), then picture.
-- "NO SIGNAL" text remains over the snow; "AV NTSD" (input-standard
-  indicator) appears for a few seconds on acquisition. Both are mask-ROM OSD.
+- adds a one-time boot unblank/blue-clear and skips `E67A(0x11)` on unlock;
+- **blue-screens when booting with the VTX off**: the first `E67A(0x11)` is
+  skipped, so the scaler is never initialized;
+- works if the VTX is already on at boot.
+
+A v2 used an `EC09` "scaler initialized" flag: it called `E67A(0x11)` on the
+first unlock, then skipped it on later drops. That fixed VTX-off boot, but the
+`EC09` write after `E67A(0x11)` delays the `EC01`/`EC00` update and leaves one
+blue frame on re-lock. Plain `noblue` has no blue on re-lock and is simpler, so
+v2 is not recommended for VTX-off boot either.
 
 ## What changed vs the older images
 
 - `noblue.bin`: snow on loss, no persistent blue. The ROM OSD text remains.
-  It does not include the boot fix or the skip-on-unlock behaviour.
+  This is the recommended image.
 - `noblue_skipe67a.bin` (original repo image): **did not reproduce the documented
   behaviour on this board.** It showed snow for about one second after loss,
   then blue + "NO SIGNAL". Its cave sets `EC00=0xFF` and jumps to `0x0082`,
   skipping the stock `EC01=0` / `EC00=E1F4` update at `0x0075`; the ROM then
   falls into its no-signal screen.
-- `bootfix_skipe67a_fixed.bin`: corrected skip-on-unlock that still runs the
-  stock state update, plus a one-time boot unblank/blue-clear, plus `0294`
-  disabled. This is the recommended image.
 
 ## Blue frame = E67A(0x11)
 
@@ -114,10 +113,11 @@ project and was not pursued.
 
 ## Test matrix (summary)
 
-| Image / change | Boot with VTX on | Loss | Reacquisition |
-|---|---|---|---|
-| `noblue` | not tested | snow + OSD | no blue |
-| `noblue_skipe67a` | not tested | ~1 s snow, then blue + OSD | blue |
-| `bootfix_skipe67a_fixed` | picture direct | snow + OSD, no blue on drop | one blue frame, then picture |
-| no reinit at all | not tested | snow | blue forever |
-| per-frame dropout counter | not tested | blue, no snow | — |
+| Image / change | Boot VTX off | Boot VTX on | Loss | Re-lock |
+|---|---|---|---|---|
+| `noblue` | snow | not tested | snow + OSD | no blue |
+| `noblue_skipe67a` | not tested | not tested | ~1 s snow, then blue + OSD | blue |
+| bootfix v1 | **blue** | picture | snow + OSD, no blue on drop | one blue frame |
+| bootfix v2 | snow | picture | snow + OSD, no blue on drop | one blue frame |
+| no reinit at all | not tested | not tested | snow | blue forever |
+| per-frame dropout counter | not tested | not tested | blue, no snow | — |

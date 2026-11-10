@@ -56,7 +56,12 @@ update at `0x0075`; the ROM then falls into its no-signal screen. Use
 
 ---
 
-## `bootfix_skipe67a_fixed.bin` — tested, recommended
+## `bootfix_skipe67a_fixed.bin` — experimental
+
+**Not recommended for VTX-off boot.** This v1 build skips the first
+`E67A(0x11)` when the converter starts with no signal, so the scaler stays
+blue. A v2 using an `EC09` "scaler initialized" flag fixed the VTX-off boot,
+but adds one blue frame on re-lock. For VTX-off boot, use `noblue.bin`.
 
 Rebuilt from `stock.bin` by `tools/build_patches.py`.
 
